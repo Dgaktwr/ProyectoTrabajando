@@ -1,77 +1,80 @@
 package Dao;
 
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import Db.DatabaseConnection;
 import Model.Personal;
+import Db.DatabaseConnection;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PersonalDao {
 
-    public void insertarPersonal(Personal personal) {
-        String sql = "INSERT INTO personal (ID_Documento, Tipo_de_Identificacion, Nombre, Apellido, Direccion, Correo_Electronico, Telefono) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, personal.getIdDocumento());
-            pstmt.setString(2, personal.getTipoIdentificacion());
-            pstmt.setString(3, personal.getNombre());
-            pstmt.setString(4, personal.getApellido());
-            pstmt.setString(5, personal.getDireccion());
-            pstmt.setString(6, personal.getCorreoElectronico());
-            pstmt.setString(7, personal.getTelefono());
-            pstmt.executeUpdate();
+    public void insertPersonal(Personal personal) {
+        String query = "INSERT INTO personal (ID_Documento, Tipo_de_Identificacion, Nombre, Apellido, Direccion, Correo_Electronico, Telefono) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, personal.getIdDocumento());
+            stmt.setString(2, personal.getTipoIdentificacion());
+            stmt.setString(3, personal.getNombre());
+            stmt.setString(4, personal.getApellido());
+            stmt.setString(5, personal.getDireccion());
+            stmt.setString(6, personal.getCorreoElectronico());
+            stmt.setString(7, personal.getTelefono());
+            stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void actualizarPersonal(Personal personal) {
-        String sql = "UPDATE personal SET Tipo_de_Identificacion=?, Nombre=?, Apellido=?, Direccion=?, Correo_Electronico=?, Telefono=? WHERE ID_Documento=?";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, personal.getTipoIdentificacion());
-            pstmt.setString(2, personal.getNombre());
-            pstmt.setString(3, personal.getApellido());
-            pstmt.setString(4, personal.getDireccion());
-            pstmt.setString(5, personal.getCorreoElectronico());
-            pstmt.setString(6, personal.getTelefono());
-            pstmt.setInt(7, personal.getIdDocumento());
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void eliminarPersonal(int idDocumento) {
-        String sql = "DELETE FROM personal WHERE ID_Documento=?";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idDocumento);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Personal consultarPersonal(int idDocumento) {
-        String sql = "SELECT * FROM personal WHERE ID_Documento=?";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idDocumento);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                Personal personal = new Personal();
-                personal.setIdDocumento(rs.getInt("ID_Documento"));
-                personal.setTipoIdentificacion(rs.getString("Tipo_de_Identificacion"));
-                personal.setNombre(rs.getString("Nombre"));
-                personal.setApellido(rs.getString("Apellido"));
-                personal.setDireccion(rs.getString("Direccion"));
-                personal.setCorreoElectronico(rs.getString("Correo_Electronico"));
-                personal.setTelefono(rs.getString("Telefono"));
-                return personal;
+    public List<Personal> getAllPersonal() {
+        List<Personal> personalList = new ArrayList<>();
+        String query = "SELECT * FROM personal";
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                personalList.add(new Personal(
+                    rs.getInt("ID_Documento"),
+                    rs.getString("Tipo_de_Identificacion"),
+                    rs.getString("Nombre"),
+                    rs.getString("Apellido"),
+                    rs.getString("Direccion"),
+                    rs.getString("Correo_Electronico"),
+                    rs.getString("Telefono")
+                ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return personalList;
+    }
+
+    public void updatePersonal(Personal personal) {
+        String query = "UPDATE personal SET Tipo_de_Identificacion = ?, Nombre = ?, Apellido = ?, Direccion = ?, Correo_Electronico = ?, Telefono = ? WHERE ID_Documento = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, personal.getTipoIdentificacion());
+            stmt.setString(2, personal.getNombre());
+            stmt.setString(3, personal.getApellido());
+            stmt.setString(4, personal.getDireccion());
+            stmt.setString(5, personal.getCorreoElectronico());
+            stmt.setString(6, personal.getTelefono());
+            stmt.setInt(7, personal.getIdDocumento());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deletePersonal(int idDocumento) {
+        String query = "DELETE FROM personal WHERE ID_Documento = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, idDocumento);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

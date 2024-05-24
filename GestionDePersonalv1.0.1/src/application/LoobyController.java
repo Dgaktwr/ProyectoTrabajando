@@ -2,6 +2,11 @@ package application;
 
 import javafx.fxml.FXML;
 
+import Dao.PersonalDao;
+import javafx.event.ActionEvent;
+import javafx.scene.control.TextField;
+import Model.Personal;
+
 public class LoobyController {
 
     @FXML
@@ -33,4 +38,37 @@ public class LoobyController {
         System.out.println("Personal button clicked");
         // Añadir lógica para el botón de Personal aquí
     }
+    @FXML
+    private TextField idField;
+    @FXML
+    private TextField nameField;
+    @FXML
+    private TextField lastNameField;
+    @FXML
+    private TextField addressField;
+    @FXML
+    private TextField emailField;
+    @FXML
+    private TextField phoneField;
+
+    private PersonalDao personalDao = new PersonalDao();
+
+    @FXML
+    private void handleAddEmployee(ActionEvent event) {
+        int id = Integer.parseInt(idField.getText());
+        String name = nameField.getText();
+        String lastName = lastNameField.getText();
+        String address = addressField.getText();
+        String email = emailField.getText();
+        String phone = phoneField.getText();
+
+        Personal personal = new Personal(id, "ID Type", name, lastName, address, email, phone);
+        personalDao.insertPersonal(personal);
+    }
+
+    @FXML
+    private void handleShowEmployees(ActionEvent event) {
+        // Implementar lógica para mostrar empleados (puede ser una nueva ventana o una lista en la misma)
+    }
+
 }

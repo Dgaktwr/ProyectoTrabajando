@@ -8,18 +8,16 @@ import javafx.scene.Scene;
 
 public class Main extends Application {
 
-	public void start(Stage primaryStage) {
-		try {
-			Parent root = FXMLLoader.load(getClass().getResource("Looby.fxml"));
-			Scene scene = new Scene(root);
-			primaryStage.setScene(scene);
-			primaryStage.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("Lobby.fxml"));
+        primaryStage.setTitle("Gestión de Personal");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
+    }
 
-	public static void main(String[] args) {
-		launch(args);
-	}
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
+
